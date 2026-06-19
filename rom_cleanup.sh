@@ -717,11 +717,17 @@ print("  1) Interactive review")
 print("  2) Auto keep best entry in every group (existing ROM first, then richest metadata)")
 print("  3) Preview only")
 print("  4) Cancel")
+while True:
+    
 mode = input("Choose [1-4]: ").strip() or "4"
+    if mode in {"1", "2", "3", "4"}:
+        break
+    print("Invalid choice. Please enter 1, 2, 3, or 4.")
 
 if mode == "4":
     print("No changes made.")
     raise SystemExit(0)
+
 
 if mode not in {"1", "2", "3"}:
     print("Invalid choice. No changes made.")
@@ -800,13 +806,20 @@ if not planned:
 
 remove_count = sum(len(remove_entries) for _, remove_entries, _ in planned)
 print(f"Selected {remove_count} gamelist entr{'y' if remove_count == 1 else 'ies'} to remove.")
+
+if mode == "2":
+    print("Auto mode: keeping entries with existing ROMs and richest metadata.")
+    print("Showing first 30 groups:")
+
 for keep, remove_entries, display_name in planned[:30]:
     print(f"\n{display_name}")
-    print(f"  Keep: {text(keep, 'path')} [score {metadata_score(keep)}]")
+    print(f" Keep: {text(keep, 'path')} [score {metadata_score(keep)}]")
     for entry in remove_entries:
-        print(f"  Remove: {text(entry, 'path')} [score {metadata_score(entry)}]")
+        print(f" Remove: {text(entry, 'path')} [score {metadata_score(entry)}]")
+
 if len(planned) > 30:
     print(f"\n... {len(planned) - 30} more group(s) selected.")
+
 
 print("\nROM files will be left in place. This avoids breaking MAME parent/clone/dependency sets.")
 answer = input("Update gamelist.xml now? (y/N): ").strip().lower()
